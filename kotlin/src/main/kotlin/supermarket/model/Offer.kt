@@ -1,19 +1,22 @@
 package supermarket.model
 
-abstract class Offer(val product: Product) {
+abstract class Offer {
     abstract fun discount(
         catalog: SupermarketCatalog,
         productQuantity: ProductQuantity
     ): Discount?
 }
 
-class ThreeForTwoOffer(product: Product) :
-    Offer(product) {
+abstract class ByProductOffer(val product: Product): Offer() {
+    internal fun applies(product: Product) = product == this.product
+}
+
+class ThreeForTwoOffer(product: Product) : ByProductOffer(product) {
     override fun discount(
         catalog: SupermarketCatalog,
         productQuantity: ProductQuantity
     ): Discount? =
-        if (productQuantity.quantity > 2) {
+        if (applies(productQuantity.product) && productQuantity.quantity > 2) {
             val unitPrice = catalog.getUnitPrice(productQuantity.product)
             val numberOfDiscounts = productQuantity.quantity / 3
             val discountAmount =
@@ -22,25 +25,23 @@ class ThreeForTwoOffer(product: Product) :
         } else null
 }
 
-class TenPercentDiscountOffer(product: Product, private val percentDiscount: Double) :
-    Offer(product) {
-    override fun discount(
-        catalog: SupermarketCatalog,
-        productQuantity: ProductQuantity
-    ): Discount =
-        Discount(
-            productQuantity.product, "$percentDiscount% off",
-            productQuantity.quantity * catalog.getUnitPrice(productQuantity.product) * percentDiscount / 100.0
-        )
-}
-
-class TwoForAmountOffer(product: Product, private val amount: Double) :
-    Offer(product) {
+class TenPercentDiscountOffer(product: Product, private val percentDiscount: Double) : ByProductOffer(product) {
     override fun discount(
         catalog: SupermarketCatalog,
         productQuantity: ProductQuantity
     ): Discount? =
-        if (productQuantity.quantity >= 2) {
+        if (applies(productQuantity.product)) Discount(
+            productQuantity.product, "$percentDiscount% off",
+            productQuantity.quantity * catalog.getUnitPrice(productQuantity.product) * percentDiscount / 100.0
+        ) else null
+}
+
+class TwoForAmountOffer(product: Product, private val amount: Double) : ByProductOffer(product) {
+    override fun discount(
+        catalog: SupermarketCatalog,
+        productQuantity: ProductQuantity
+    ): Discount? =
+        if (applies(productQuantity.product) && productQuantity.quantity >= 2) {
             val unitPrice = catalog.getUnitPrice(productQuantity.product)
             val total =
                 amount * (productQuantity.quantity.toInt() / 2) + productQuantity.quantity % 2 * unitPrice
@@ -49,13 +50,12 @@ class TwoForAmountOffer(product: Product, private val amount: Double) :
         } else null
 }
 
-class FiveForAmountOffer(product: Product, private val amount: Double) :
-    Offer(product) {
+class FiveForAmountOffer(product: Product, private val amount: Double) : ByProductOffer(product) {
     override fun discount(
         catalog: SupermarketCatalog,
         productQuantity: ProductQuantity
     ): Discount? =
-        if (productQuantity.quantity >= 5) {
+        if (applies(productQuantity.product) && productQuantity.quantity >= 5) {
             val unitPrice = catalog.getUnitPrice(productQuantity.product)
             val numberOfDiscounts = productQuantity.quantity.toInt() / 5
             val discountTotal =

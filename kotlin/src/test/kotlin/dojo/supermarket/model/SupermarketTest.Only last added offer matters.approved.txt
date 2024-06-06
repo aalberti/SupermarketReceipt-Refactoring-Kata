@@ -1,0 +1,5 @@
+toothbrush                          2.97
+  0.99 * 3
+10.0% off(toothbrush)              -0.30
+
+Total:                              2.67

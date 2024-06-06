@@ -146,4 +146,16 @@ class SupermarketTest {
 
         verify(printer.printReceipt(receipt))
     }
+
+    @Test
+    fun `Only last added offer matters`() {
+        val cart = ShoppingCart()
+        cart.addItem(toothbrush, 3.0)
+        teller.addSpecialOffer(ThreeForTwoOffer(toothbrush))
+        teller.addSpecialOffer(TenPercentDiscountOffer(toothbrush, 10.0))
+
+        val receipt = teller.checksOutArticlesFrom(cart)
+
+        verify(printer.printReceipt(receipt))
+    }
 }
