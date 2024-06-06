@@ -13,24 +13,20 @@ class Offer(private var offerType: SpecialOfferType, internal val product: Produ
         else when (this.offerType) {
             TwoForAmount -> {
                 val quantityAsInt = quantity.toInt()
-                if (quantityAsInt >= 2) {
-                    val total =
-                        this.argument * (quantityAsInt / 2) + quantityAsInt % 2 * catalog.getUnitPrice(product)
-                    val amount = catalog.getUnitPrice(product) * quantity - total
-                    Discount(product, "2 for " + this.argument, amount)
-                } else null
+                val total =
+                    this.argument * (quantityAsInt / 2) + quantityAsInt % 2 * catalog.getUnitPrice(product)
+                val amount = catalog.getUnitPrice(product) * quantity - total
+                Discount(product, "2 for " + this.argument, amount)
             }
 
             ThreeForTwo -> {
                 val quantityAsInt = quantity.toInt()
-                if (quantityAsInt > 2) {
-                    val numberOfDiscounts = quantityAsInt / 3
-                    val discountAmount =
-                        quantity * catalog.getUnitPrice(product) - (numberOfDiscounts.toDouble() * 2.0 * catalog.getUnitPrice(
-                            product
-                        ) + quantityAsInt % 3 * catalog.getUnitPrice(product))
-                    Discount(product, "3 for 2", discountAmount)
-                } else null
+                val numberOfDiscounts = quantityAsInt / 3
+                val discountAmount =
+                    quantity * catalog.getUnitPrice(product) - (numberOfDiscounts.toDouble() * 2.0 * catalog.getUnitPrice(
+                        product
+                    ) + quantityAsInt % 3 * catalog.getUnitPrice(product))
+                Discount(product, "3 for 2", discountAmount)
             }
 
             TenPercentDiscount -> {
@@ -42,14 +38,12 @@ class Offer(private var offerType: SpecialOfferType, internal val product: Produ
 
             FiveForAmount -> {
                 val quantityAsInt = quantity.toInt()
-                if (quantityAsInt >= 5) {
-                    val numberOfDiscounts = quantityAsInt / 5
-                    val discountTotal =
-                        catalog.getUnitPrice(product) * quantity - (this.argument * numberOfDiscounts + quantityAsInt % 5 * catalog.getUnitPrice(
-                            product
-                        ))
-                    Discount(product, 5.toString() + " for " + this.argument, discountTotal)
-                } else null
+                val numberOfDiscounts = quantityAsInt / 5
+                val discountTotal =
+                    catalog.getUnitPrice(product) * quantity - (this.argument * numberOfDiscounts + quantityAsInt % 5 * catalog.getUnitPrice(
+                        product
+                    ))
+                Discount(product, 5.toString() + " for " + this.argument, discountTotal)
             }
         }
     }

@@ -13,10 +13,9 @@ class ShoppingCart {
 
     internal fun handleOffers(receipt: Receipt, offers: Map<Product, Offer>, catalog: SupermarketCatalog) {
         for (item in items) {
-            val product = item.product
-            val quantity = item.quantity
-            if (offers.containsKey(product)) {
-                val offer = offers[product]!!
+            item.quantity
+            if (offers.containsKey(item.product)) {
+                val offer = offers[item.product]!!
                 offer.discount(catalog, item)
                     ?.let { receipt.addDiscount(it) }
             }
