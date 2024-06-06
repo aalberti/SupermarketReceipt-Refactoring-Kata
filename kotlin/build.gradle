@@ -19,4 +19,5 @@ test {
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     testImplementation 'io.kotest:kotest-assertions-core:5.8.1'
+    testImplementation 'net.wuerl.kotlin:assertj-core-kotlin:0.2.1'
 }
