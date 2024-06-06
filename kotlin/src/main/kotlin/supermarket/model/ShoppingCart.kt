@@ -7,7 +7,7 @@ class ShoppingCart {
         return ArrayList(items)
     }
 
-    fun addItemQuantity(product: Product, quantity: Double) {
+    fun addItem(product: Product, quantity: Double) {
         items.add(ProductQuantity(product, quantity))
     }
 

@@ -1,7 +1,15 @@
 package supermarket.model
 
-enum class SpecialOfferType {
-    ThreeForTwo {
+sealed class SpecialOfferType {
+    abstract fun applies(productQuantity: ProductQuantity): Boolean
+
+    abstract fun discount(
+        offerArgument: Double,
+        productQuantity: ProductQuantity,
+        unitPrice: Double
+    ): Discount
+
+    data object ThreeForTwo : SpecialOfferType() {
         override fun applies(productQuantity: ProductQuantity): Boolean =
             productQuantity.quantity.toInt() > 2
 
@@ -15,8 +23,9 @@ enum class SpecialOfferType {
                 productQuantity.quantity * unitPrice - (numberOfDiscounts.toDouble() * 2.0 * unitPrice + productQuantity.quantity % 3 * unitPrice)
             return Discount(productQuantity.product, "3 for 2", discountAmount)
         }
-    },
-    TenPercentDiscount {
+    }
+
+    data object TenPercentDiscount : SpecialOfferType() {
         override fun applies(productQuantity: ProductQuantity): Boolean = true
 
         override fun discount(
@@ -27,8 +36,9 @@ enum class SpecialOfferType {
             productQuantity.product, "$offerArgument% off",
             productQuantity.quantity * unitPrice * offerArgument / 100.0
         )
-    },
-    TwoForAmount {
+    }
+
+    data object TwoForAmount : SpecialOfferType() {
         override fun applies(productQuantity: ProductQuantity): Boolean =
             productQuantity.quantity.toInt() >= 2
 
@@ -42,8 +52,9 @@ enum class SpecialOfferType {
             val amount = unitPrice * productQuantity.quantity - total
             return Discount(productQuantity.product, "2 for $offerArgument", amount)
         }
-    },
-    FiveForAmount {
+    }
+
+    data object FiveForAmount : SpecialOfferType() {
         override fun applies(productQuantity: ProductQuantity): Boolean =
             productQuantity.quantity.toInt() >= 5
 
@@ -57,13 +68,5 @@ enum class SpecialOfferType {
                 unitPrice * productQuantity.quantity - (offerArgument * numberOfDiscounts + productQuantity.quantity % 5 * unitPrice)
             return Discount(productQuantity.product, "5 for $offerArgument", discountTotal)
         }
-    };
-
-    abstract fun applies(productQuantity: ProductQuantity): Boolean
-
-    abstract fun discount(
-        offerArgument: Double,
-        productQuantity: ProductQuantity,
-        unitPrice: Double
-    ): Discount
+    }
 }
