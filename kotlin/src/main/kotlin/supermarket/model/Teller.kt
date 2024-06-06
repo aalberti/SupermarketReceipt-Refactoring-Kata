@@ -20,7 +20,6 @@ class Teller(private val catalog: SupermarketCatalog) {
             val price = quantity * unitPrice
             receipt.addProduct(p, quantity, unitPrice, price)
         }
-//==== NEXT: Introduce bundle offers
         for (offer in offers)
             offer.discount(cart, catalog)?.let { discount -> receipt.addDiscount(discount) }
 

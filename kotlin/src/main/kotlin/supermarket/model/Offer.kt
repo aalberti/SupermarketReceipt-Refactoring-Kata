@@ -1,5 +1,7 @@
 package supermarket.model
 
+import kotlin.math.min
+
 abstract class Offer {
     abstract fun discount(
         cart: ShoppingCart,
@@ -7,7 +9,32 @@ abstract class Offer {
     ): Discount?
 }
 
-abstract class ByProductOffer(val product: Product): Offer() {
+class CleanTeethBundle(private val price: Double) : Offer() {
+    override fun discount(cart: ShoppingCart, catalog: SupermarketCatalog): Discount? =
+        if (cart.items
+                .map { it.product.name }
+                .containsAll(listOf("toothpaste", "toothbrush"))
+        ) {
+            val numberOfDiscounts = min(cart.numberOf("toothbrush"), cart.numberOf("toothpaste"))
+            val toothbrushPrice = catalog.getUnitPrice(cart.product("toothbrush"))
+            val toothpastePrice = catalog.getUnitPrice(cart.product("toothpaste"))
+            val discountAmount = numberOfDiscounts * (toothbrushPrice + toothpastePrice - price)
+            Discount(Product("", ProductUnit.Each), "clean teeth bundle", discountAmount)
+        } else
+            null
+
+    private fun ShoppingCart.numberOf(productName: String) =
+        items
+            .filter { it.product.name == productName }
+            .sumOf { it.quantity }.toInt()
+
+    private fun ShoppingCart.product(name: String): Product = items
+        .map { it.product }
+        .first { it.name == name }
+}
+
+
+abstract class ByProductOffer(val product: Product) : Offer() {
     override fun discount(
         cart: ShoppingCart,
         catalog: SupermarketCatalog

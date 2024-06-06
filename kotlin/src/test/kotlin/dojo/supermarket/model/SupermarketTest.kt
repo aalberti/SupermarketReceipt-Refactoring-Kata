@@ -7,10 +7,12 @@ import supermarket.model.*
 
 class SupermarketTest {
     private val toothbrush = Product("toothbrush", ProductUnit.Each)
+    private val toothpaste = Product("toothpaste", ProductUnit.Each)
     private val apples = Product("apples", ProductUnit.Kilo)
     private val teller: Teller by lazy {
         val catalog = FakeCatalog()
         catalog.addProduct(toothbrush, 0.99)
+        catalog.addProduct(toothpaste, 0.49)
         catalog.addProduct(apples, 1.99)
         Teller(catalog)
     }
@@ -153,6 +155,40 @@ class SupermarketTest {
         cart.addItem(toothbrush, 3.0)
         teller.addSpecialOffer(ThreeForTwoOffer(toothbrush))
         teller.addSpecialOffer(TenPercentDiscountOffer(toothbrush, 10.0))
+
+        val receipt = teller.checksOutArticlesFrom(cart)
+
+        verify(printer.printReceipt(receipt))
+    }
+
+    @Test
+    fun `clean teeth bundle`() {
+        val cart = ShoppingCart()
+        cart.addItem(toothbrush, 3.0)
+        cart.addItem(toothpaste, 2.0)
+        teller.addSpecialOffer(CleanTeethBundle(1.19))
+
+        val receipt = teller.checksOutArticlesFrom(cart)
+
+        verify(printer.printReceipt(receipt))
+    }
+
+    @Test
+    fun `clean teeth bundle doesn't apply without toothbrush`() {
+        val cart = ShoppingCart()
+        cart.addItem(toothpaste, 2.0)
+        teller.addSpecialOffer(CleanTeethBundle(1.19))
+
+        val receipt = teller.checksOutArticlesFrom(cart)
+
+        verify(printer.printReceipt(receipt))
+    }
+
+    @Test
+    fun `clean teeth bundle doesn't apply without toothpaste`() {
+        val cart = ShoppingCart()
+        cart.addItem(toothbrush, 3.0)
+        teller.addSpecialOffer(CleanTeethBundle(1.19))
 
         val receipt = teller.checksOutArticlesFrom(cart)
 

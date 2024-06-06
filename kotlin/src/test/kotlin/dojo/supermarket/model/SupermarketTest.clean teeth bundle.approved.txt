@@ -1,0 +1,7 @@
+toothbrush                          2.97
+  0.99 * 3
+toothpaste                          0.98
+  0.49 * 2
+clean teeth bundle()               -0.58
+
+Total:                              3.37
