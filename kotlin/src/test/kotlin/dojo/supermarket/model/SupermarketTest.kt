@@ -73,4 +73,26 @@ class SupermarketTest {
 
         verify(printer.printReceipt(receipt))
     }
+
+    @Test
+    fun `5 for amount`() {
+        val cart = ShoppingCart()
+        cart.addItemQuantity(toothbrush, 6.0)
+        teller.addSpecialOffer(FiveForAmount, toothbrush, 2.99)
+
+        val receipt = teller.checksOutArticlesFrom(cart)
+
+        verify(printer.printReceipt(receipt))
+    }
+
+    @Test
+    fun `5 for amount twice`() {
+        val cart = ShoppingCart()
+        cart.addItemQuantity(toothbrush, 12.0)
+        teller.addSpecialOffer(FiveForAmount, toothbrush, 5.99)
+
+        val receipt = teller.checksOutArticlesFrom(cart)
+
+        verify(printer.printReceipt(receipt))
+    }
 }

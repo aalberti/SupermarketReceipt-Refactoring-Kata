@@ -1,0 +1,5 @@
+toothbrush                         11.88
+  0.99 * c
+5 for 5.99(toothbrush)            --2.08
+
+Total:                             13.96
