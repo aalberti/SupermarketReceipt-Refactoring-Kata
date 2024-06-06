@@ -20,6 +20,7 @@ class Teller(private val catalog: SupermarketCatalog) {
             val price = quantity * unitPrice
             receipt.addProduct(p, quantity, unitPrice, price)
         }
+//==== NEXT: Remove product from Discount
         for (offer in offers)
             offer.discount(cart, catalog)?.let { discount -> receipt.addDiscount(discount) }
 

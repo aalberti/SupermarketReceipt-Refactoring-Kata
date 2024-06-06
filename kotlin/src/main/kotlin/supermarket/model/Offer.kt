@@ -19,7 +19,7 @@ class CleanTeethBundle(private val price: Double) : Offer() {
             val toothbrushPrice = catalog.getUnitPrice(cart.product("toothbrush"))
             val toothpastePrice = catalog.getUnitPrice(cart.product("toothpaste"))
             val discountAmount = numberOfDiscounts * (toothbrushPrice + toothpastePrice - price)
-            Discount(Product("", ProductUnit.Each), "clean teeth bundle", discountAmount)
+            Discount("clean teeth bundle", discountAmount)
         } else
             null
 
@@ -38,7 +38,7 @@ abstract class ByProductOffer(val product: Product) : Offer() {
     override fun discount(
         cart: ShoppingCart,
         catalog: SupermarketCatalog
-    ): Discount? = cart.items
+    ): ProductDiscount? = cart.items
         .filter { this.applies(it) }
         .map { this.discount(catalog, it) }
         .firstOrNull()
@@ -46,19 +46,19 @@ abstract class ByProductOffer(val product: Product) : Offer() {
     internal open fun applies(productQuantity: ProductQuantity) =
         productQuantity.product == this.product
 
-    abstract fun discount(catalog: SupermarketCatalog, productQuantity: ProductQuantity): Discount
+    abstract fun discount(catalog: SupermarketCatalog, productQuantity: ProductQuantity): ProductDiscount
 }
 
 class ThreeForTwoOffer(product: Product) : ByProductOffer(product) {
     override fun discount(
         catalog: SupermarketCatalog,
         productQuantity: ProductQuantity
-    ): Discount {
+    ): ProductDiscount {
         val unitPrice = catalog.getUnitPrice(productQuantity.product)
         val numberOfDiscounts = productQuantity.quantity / 3
         val discountAmount =
             productQuantity.quantity * unitPrice - (numberOfDiscounts * 2.0 * unitPrice + productQuantity.quantity % 3 * unitPrice)
-        return Discount(productQuantity.product, "3 for 2", discountAmount)
+        return ProductDiscount(productQuantity.product, "3 for 2", discountAmount)
     }
 
     override fun applies(productQuantity: ProductQuantity) =
@@ -69,7 +69,7 @@ class TenPercentDiscountOffer(product: Product, private val percentDiscount: Dou
     override fun discount(
         catalog: SupermarketCatalog,
         productQuantity: ProductQuantity
-    ) = Discount(
+    ) = ProductDiscount(
         productQuantity.product, "$percentDiscount% off",
         productQuantity.quantity * catalog.getUnitPrice(productQuantity.product) * percentDiscount / 100.0
     )
@@ -79,12 +79,12 @@ class TwoForAmountOffer(product: Product, private val amount: Double) : ByProduc
     override fun discount(
         catalog: SupermarketCatalog,
         productQuantity: ProductQuantity
-    ): Discount {
+    ): ProductDiscount {
         val unitPrice = catalog.getUnitPrice(productQuantity.product)
         val total =
             amount * (productQuantity.quantity.toInt() / 2) + productQuantity.quantity % 2 * unitPrice
         val discountAmount = unitPrice * productQuantity.quantity - total
-        return Discount(productQuantity.product, "2 for $amount", discountAmount)
+        return ProductDiscount(productQuantity.product, "2 for $amount", discountAmount)
     }
 
     override fun applies(productQuantity: ProductQuantity) =
@@ -95,12 +95,12 @@ class FiveForAmountOffer(product: Product, private val amount: Double) : ByProdu
     override fun discount(
         catalog: SupermarketCatalog,
         productQuantity: ProductQuantity
-    ): Discount {
+    ): ProductDiscount {
         val unitPrice = catalog.getUnitPrice(productQuantity.product)
         val numberOfDiscounts = productQuantity.quantity.toInt() / 5
         val discountTotal =
             unitPrice * productQuantity.quantity - (amount * numberOfDiscounts + productQuantity.quantity % 5 * unitPrice)
-        return Discount(productQuantity.product, "5 for $amount", discountTotal)
+        return ProductDiscount(productQuantity.product, "5 for $amount", discountTotal)
     }
 
     override fun applies(productQuantity: ProductQuantity) =
