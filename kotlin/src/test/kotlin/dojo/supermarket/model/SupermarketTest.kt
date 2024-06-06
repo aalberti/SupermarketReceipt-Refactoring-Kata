@@ -29,8 +29,7 @@ class SupermarketTest {
 
         val receipt = teller.checksOutArticlesFrom(cart)
 
-        assertReceipt(
-            receipt,
+        receipt.assertIs(
             listOf(ReceiptItem(apples, 2.5, 1.99, 4.975)),
             listOf(),
             4.975
@@ -46,8 +45,7 @@ class SupermarketTest {
 
         val receipt = teller.checksOutArticlesFrom(cart)
 
-        assertReceipt(
-            receipt,
+        receipt.assertIs(
             listOf(ReceiptItem(toothbrush, 1.0, 0.99, 0.99)),
             listOf(Discount(toothbrush, "10.0% off", 0.099)),
             0.99 - 0.099
@@ -63,27 +61,26 @@ class SupermarketTest {
 
         val receipt = teller.checksOutArticlesFrom(cart)
 
-        assertReceipt(
-            receipt,
+        receipt.assertIs(
             listOf(ReceiptItem(toothbrush, 3.0, 0.99, 2.97)),
             listOf(Discount(toothbrush, "3 for 2", 0.99)),
             0.99 * 2
         )
     }
 
-    private fun assertReceipt(
-        receipt: Receipt, receiptItems: List<ReceiptItem>, discounts: List<Discount>, totalPrice: Double
+    private fun Receipt.assertIs(
+        receiptItems: List<ReceiptItem>, discounts: List<Discount>, totalPrice: Double
     ) {
         assertAll({
-            assertThatList(receipt.getItems())
+            assertThatList(this.getItems())
                 .isEqualTo(
                     receiptItems
                 )
-            assertThatList(receipt.getDiscounts())
+            assertThatList(this.getDiscounts())
                 .isEqualTo(
                     discounts
                 )
-            assertThat(receipt.totalPrice)
+            assertThat(this.totalPrice)
                 .usingComparator(DoubleComparator(0.001))
                 .isEqualTo(totalPrice)
         })
