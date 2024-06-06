@@ -31,6 +31,17 @@ class SupermarketTest {
     }
 
     @Test
+    fun `add twice`() {
+        val cart = ShoppingCart()
+        cart.addItemQuantity(apples, 1.0)
+        cart.addItemQuantity(apples, 1.0)
+
+        val receipt = teller.checksOutArticlesFrom(cart)
+
+        verify(printer.printReceipt(receipt))
+    }
+
+    @Test
     fun `no discount applies`() {
         val cart = ShoppingCart()
         cart.addItemQuantity(apples, 1.5)
