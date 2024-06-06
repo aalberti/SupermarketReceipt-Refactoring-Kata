@@ -31,6 +31,20 @@ class SupermarketTest {
     }
 
     @Test
+    fun `no discount applies`() {
+        val cart = ShoppingCart()
+        cart.addItemQuantity(apples, 1.5)
+        teller.addSpecialOffer(TenPercentDiscount, apples, 10.0)
+        teller.addSpecialOffer(ThreeForTwo, apples, 10.0)
+        teller.addSpecialOffer(TwoForAmount, apples, 1.5)
+        teller.addSpecialOffer(FiveForAmount, apples, 2.99)
+
+        val receipt = teller.checksOutArticlesFrom(cart)
+
+        verify(printer.printReceipt(receipt))
+    }
+
+    @Test
     fun `10 percent discount`() {
         val cart = ShoppingCart()
         cart.addItemQuantity(toothbrush, 1.0)
