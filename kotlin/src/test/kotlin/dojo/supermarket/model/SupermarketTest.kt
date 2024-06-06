@@ -3,11 +3,7 @@ package dojo.supermarket.model
 import org.approvaltests.Approvals.verify
 import org.junit.jupiter.api.Test
 import supermarket.ReceiptPrinter
-import supermarket.model.Product
-import supermarket.model.ProductUnit
-import supermarket.model.ShoppingCart
-import supermarket.model.SpecialOfferType.*
-import supermarket.model.Teller
+import supermarket.model.*
 
 class SupermarketTest {
     private val toothbrush = Product("toothbrush", ProductUnit.Each)
@@ -45,7 +41,7 @@ class SupermarketTest {
     fun `10 percent discount`() {
         val cart = ShoppingCart()
         cart.addItem(toothbrush, 1.0)
-        teller.addSpecialOffer(TenPercentDiscount, toothbrush, 10.0)
+        teller.addSpecialOffer(TenPercentDiscountOffer(toothbrush, 10.0))
 
         val receipt = teller.checksOutArticlesFrom(cart)
 
@@ -56,7 +52,7 @@ class SupermarketTest {
     fun `discount for another product doesn't apply`() {
         val cart = ShoppingCart()
         cart.addItem(apples, 1.0)
-        teller.addSpecialOffer(TenPercentDiscount, toothbrush, 10.0)
+        teller.addSpecialOffer(TenPercentDiscountOffer(toothbrush, 10.0))
 
         val receipt = teller.checksOutArticlesFrom(cart)
 
@@ -67,7 +63,7 @@ class SupermarketTest {
     fun `3 for 2`() {
         val cart = ShoppingCart()
         cart.addItem(toothbrush, 3.0)
-        teller.addSpecialOffer(ThreeForTwo, toothbrush, 10.0)
+        teller.addSpecialOffer(ThreeForTwoOffer(toothbrush))
 
         val receipt = teller.checksOutArticlesFrom(cart)
 
@@ -78,7 +74,7 @@ class SupermarketTest {
     fun `3 for 2 doesn't apply`() {
         val cart = ShoppingCart()
         cart.addItem(toothbrush, 2.0)
-        teller.addSpecialOffer(ThreeForTwo, toothbrush, 10.0)
+        teller.addSpecialOffer(ThreeForTwoOffer(toothbrush))
 
         val receipt = teller.checksOutArticlesFrom(cart)
 
@@ -89,7 +85,7 @@ class SupermarketTest {
     fun `2 for amount`() {
         val cart = ShoppingCart()
         cart.addItem(toothbrush, 3.0)
-        teller.addSpecialOffer(TwoForAmount, toothbrush, 1.5)
+        teller.addSpecialOffer(TwoForAmountOffer(toothbrush, 1.50))
 
         val receipt = teller.checksOutArticlesFrom(cart)
 
@@ -100,7 +96,7 @@ class SupermarketTest {
     fun `2 for amount twice`() {
         val cart = ShoppingCart()
         cart.addItem(toothbrush, 4.0)
-        teller.addSpecialOffer(TwoForAmount, toothbrush, 1.5)
+        teller.addSpecialOffer(TwoForAmountOffer(toothbrush, 1.50))
 
         val receipt = teller.checksOutArticlesFrom(cart)
 
@@ -111,7 +107,7 @@ class SupermarketTest {
     fun `2 for amount doesn't apply`() {
         val cart = ShoppingCart()
         cart.addItem(toothbrush, 1.0)
-        teller.addSpecialOffer(TwoForAmount, toothbrush, 1.5)
+        teller.addSpecialOffer(TwoForAmountOffer(toothbrush, 1.50))
 
         val receipt = teller.checksOutArticlesFrom(cart)
 
@@ -122,7 +118,7 @@ class SupermarketTest {
     fun `5 for amount`() {
         val cart = ShoppingCart()
         cart.addItem(toothbrush, 6.0)
-        teller.addSpecialOffer(FiveForAmount, toothbrush, 2.99)
+        teller.addSpecialOffer(FiveForAmountOffer(toothbrush, 2.99))
 
         val receipt = teller.checksOutArticlesFrom(cart)
 
@@ -133,7 +129,7 @@ class SupermarketTest {
     fun `5 for amount twice`() {
         val cart = ShoppingCart()
         cart.addItem(toothbrush, 12.0)
-        teller.addSpecialOffer(FiveForAmount, toothbrush, 5.99)
+        teller.addSpecialOffer(FiveForAmountOffer(toothbrush, 5.99))
 
         val receipt = teller.checksOutArticlesFrom(cart)
 
@@ -144,7 +140,7 @@ class SupermarketTest {
     fun `5 for amount doesn't apply`() {
         val cart = ShoppingCart()
         cart.addItem(toothbrush, 4.0)
-        teller.addSpecialOffer(FiveForAmount, toothbrush, 2.99)
+        teller.addSpecialOffer(FiveForAmountOffer(toothbrush, 2.99))
 
         val receipt = teller.checksOutArticlesFrom(cart)
 
