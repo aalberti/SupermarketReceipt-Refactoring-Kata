@@ -20,10 +20,9 @@ class Teller(private val catalog: SupermarketCatalog) {
             val price = quantity * unitPrice
             receipt.addProduct(p, quantity, unitPrice, price)
         }
-//==== NEXT: offers work on the cart, not cart items. Offers are thus not per product. There can thus be multiple offers per product (check tests)
-        for (item in cart.items)
-            for (offer in offers)
-                offer.discount(catalog, item)?.let { discount -> receipt.addDiscount(discount) }
+//==== NEXT: Introduce bundle offers
+        for (offer in offers)
+            offer.discount(cart, catalog)?.let { discount -> receipt.addDiscount(discount) }
 
         return receipt
     }
