@@ -17,7 +17,7 @@ class ShoppingCart {
             val quantity = item.quantity
             if (offers.containsKey(product)) {
                 val offer = offers[product]!!
-                offer.discount(quantity, catalog, product)
+                offer.discount(catalog, item)
                     ?.let { receipt.addDiscount(it) }
             }
         }
